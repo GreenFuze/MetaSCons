@@ -111,7 +111,7 @@ def def_from_windows_objs(target, source, env):
 	# make sure that dumpbin is found
 	if not env.WhereIs('dumpbin'):
 		print('dumpbin.exe is not found. Exiting...', file=sys.stderr)
-		env.Exit(1)
+		sys.exit(1)
 	
 	# use dumpbin to extract symbols from object files
 	object_files = [str(s.abspath) for s in source]
@@ -121,7 +121,7 @@ def def_from_windows_objs(target, source, env):
 			process = subprocess.run([env.WhereIs('dumpbin'), '/SYMBOLS', object_file], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 			if process.returncode != 0:
 				print(f'Failed to extract symbols from {object_file}. Exiting...', file=sys.stderr)
-				env.Exit(1)
+				sys.exit(1)
 			# parse output and append to symbols list - make sure to append only the symbol name
 			output = process.stdout.decode()
 			# Adjust the regex pattern based on the actual format of the dumpbin output
@@ -133,7 +133,7 @@ def def_from_windows_objs(target, source, env):
 					symbols.append(symbol)
 		except Exception as e:
 			print(f'Failed to extract symbols from {object_file}.\nError {e}.\nExiting...', file=sys.stderr)
-			env.Exit(1)
+			sys.exit(1)
 
 	# make sure all symbols are unique by converting to set and back to list
 	symbols = list(set(symbols))
